@@ -1,0 +1,14 @@
+# macOS
+.DS_Store
+
+# Rust build artifacts
+/target
+
+# Obsidian per-user / transient state
+.obsidian/workspace.json
+.obsidian/cache
+.trash/
+
+# Editor/IDE
+.idea/
+.vscode/

@@ -13,3 +13,9 @@ The goal of this app is to organize my daily workflow. Since I started working w
 - This app is managed inside this repository
 - Uses a Markdown Kanban board
 - Project details are contained in the [project folder](./project)
+
+## Working on this project
+- Describe a task inside: [project folder](./project)
+- Create a feature branch that should follow the naming convention: `your_github_user_name.card_name.description_of_the_work_being_done`
+- Work on the feature branch
+- Create a PR
