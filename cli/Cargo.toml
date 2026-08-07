@@ -1,0 +1,9 @@
+[package]
+name = "work-context-manager-cli"
+version = "0.1.0"
+edition = "2021"
+description = "Command line interface for Work Context Manager"
+license = "MIT"
+
+[dependencies]
+work-context-manager = { path = "../lib" }

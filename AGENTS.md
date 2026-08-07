@@ -28,4 +28,13 @@ The app is Rust:
 
 ## Commands
 
-No build/tooling commands are set up yet — the Rust project has not been scaffolded. Once the workspace exists, note here the canonical `cargo build` / `cargo test` / lint commands and update this file.
+The project is a Cargo workspace with two crates: `lib/` (core logic) and `cli/` (thin CLI front-end). Canonical commands are wrapped in the Makefile at the repo root:
+
+- `make build` — build the whole workspace
+- `make run` — run the CLI
+- `make test` — run all tests
+- `make lint` — run `cargo clippy` with warnings as errors
+- `make fmt` — check formatting with `cargo fmt --check`
+- `make clean` — remove build artifacts
+
+Note: rustup was installed with `--no-modify-path`, so `~/.cargo/bin` may not be on `PATH`. If `cargo` is not found, add it (e.g. `PATH="$HOME/.cargo/bin:$PATH"`).

@@ -6,7 +6,6 @@ kanban-plugin: board
 
 ## TODO
 
-- [ ] [[MVP - Create Project Cask]]
 
 
 ## DOING
@@ -14,6 +13,8 @@ kanban-plugin: board
 
 
 ## DONE
+
+- [x] [[MVP - Create Project Cask]]
 
 
 
