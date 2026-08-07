@@ -1,0 +1,5 @@
+- We are creating the cask of the project
+- This project will be in rust
+	- Will have the lib and cli separated
+	- In future we will have a tauri app so the coding in this initial phase that will only use cli also needs to be extensible / reusable for a future Tauri app.
+	- This cask just need to create 
