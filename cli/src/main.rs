@@ -184,48 +184,37 @@ fn cmd_list() -> Result<()> {
 
 fn cmd_open(project: Option<String>) -> Result<()> {
     let cfg = load_or_create_config()?;
-    let project = match project {
-        Some(project) => project,
-        None => {
-            let projects = context_manager::project::list_projects(&cfg).with_context(|| {
-                format!(
-                    "failed to list projects from {}",
-                    cfg.work_context_repo.display()
-                )
-            })?;
-            if projects.is_empty() {
-                return Err(
-                    context_manager::Error::NoProjects(cfg.work_context_repo.clone()).into(),
-                );
-            }
-            pick_project(&projects)?
+    let root = context_manager::tree::build_tree(&cfg)?;
+    let levels = match project {
+        Some(project) => {
+            let child = root
+                .children
+                .iter()
+                .find(|c| c.name == project)
+                .with_context(|| format!("project `{project}` not found"))?
+                .clone();
+            vec![(root, 0), (child, 0)]
         }
+        None => vec![(root, 0)],
     };
-
-    let contexts = context_manager::project::list_contexts(&cfg, &project)
-        .with_context(|| format!("failed to list contexts in project `{project}`"))?;
-    if contexts.is_empty() {
-        println!("no work contexts found in project `{project}`");
-        return Ok(());
-    }
-    let context = pick_context(&contexts)?;
-
-    let editor = cfg.resolve_editor();
-    println!("{} opening with `{}` ...", "➜".cyan().bold(), editor);
-    context_manager::open_with(&context, &editor)
-        .with_context(|| "failed to open the work context in the editor")?;
-    Ok(())
+    run_tree_browser(&cfg, levels)
 }
 
 fn cmd_tree() -> Result<()> {
+    let cfg = load_or_create_config()?;
+    let root = context_manager::tree::build_tree(&cfg)?;
+    run_tree_browser(&cfg, vec![(root, 0)])
+}
+
+fn run_tree_browser(
+    cfg: &Config,
+    levels: Vec<(context_manager::tree::TreeNode, usize)>,
+) -> Result<()> {
     use console::{Key, Term};
     use std::io::Write;
 
-    let cfg = load_or_create_config()?;
-    let root = context_manager::tree::build_tree(&cfg)?;
     let mut term = Term::stderr();
-
-    let mut levels: Vec<(context_manager::tree::TreeNode, usize)> = vec![(root, 0)];
+    let mut levels = levels;
 
     term.hide_cursor()?;
     let result = (|| -> Result<()> {
@@ -401,25 +390,6 @@ fn pick_project(projects: &[String]) -> Result<String> {
         .interact()
         .context("failed to read project selection")?;
     Ok(projects[selection].clone())
-}
-
-fn pick_context(contexts: &[std::path::PathBuf]) -> Result<std::path::PathBuf> {
-    use dialoguer::Select;
-
-    let names: Vec<String> = contexts
-        .iter()
-        .map(|p| {
-            p.file_name()
-                .map(|n| n.to_string_lossy().into_owned())
-                .unwrap_or_else(|| p.display().to_string())
-        })
-        .collect();
-    let selection = Select::with_theme(&theme())
-        .with_prompt("Choose a work context")
-        .items(&names)
-        .interact()
-        .context("failed to read context selection")?;
-    Ok(contexts[selection].clone())
 }
 
 fn pick_template(templates: &[Template]) -> Result<Template> {
