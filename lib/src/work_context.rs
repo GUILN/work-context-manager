@@ -12,7 +12,7 @@ use crate::template::Template;
 /// # Example
 ///
 /// ```
-/// use work_context_manager::{Config, Template, work_context};
+/// use context_manager::{Config, Template, work_context};
 ///
 /// let dir = std::env::temp_dir().join("wcm-doc-new");
 /// let repo = dir.join("repo");
@@ -52,7 +52,7 @@ pub fn new_work_context(config: &Config, name: &str, template: &Template) -> Res
 /// # Example
 ///
 /// ```
-/// use work_context_manager::work_context::sanitize_name;
+/// use context_manager::work_context::sanitize_name;
 ///
 /// assert_eq!(sanitize_name("My Work").unwrap(), "my-work");
 /// assert_eq!(sanitize_name("  Frontend   Refresh ").unwrap(), "frontend-refresh");

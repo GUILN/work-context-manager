@@ -15,7 +15,7 @@ impl Template {
     /// # Example
     ///
     /// ```
-    /// use work_context_manager::Template;
+    /// use context_manager::Template;
     ///
     /// let dir = std::env::temp_dir().join("wcm-doc-contents");
     /// std::fs::create_dir_all(&dir).unwrap();
@@ -36,7 +36,7 @@ impl Template {
     /// # Example
     ///
     /// ```
-    /// use work_context_manager::Template;
+    /// use context_manager::Template;
     ///
     /// let dir = std::env::temp_dir().join("wcm-doc-render");
     /// std::fs::create_dir_all(&dir).unwrap();
@@ -61,7 +61,7 @@ impl Template {
 /// # Example
 ///
 /// ```
-/// use work_context_manager::template::list_templates;
+/// use context_manager::template::list_templates;
 ///
 /// let dir = std::env::temp_dir().join("wcm-doc-list");
 /// std::fs::create_dir_all(&dir).unwrap();

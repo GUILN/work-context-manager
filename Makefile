@@ -6,7 +6,7 @@ build:
 	cargo build
 
 run:
-	cargo run -p work-context-manager-cli
+	cargo run -p context-manager-cli
 
 test:
 	cargo test
@@ -21,7 +21,7 @@ fmt:
 	cargo fmt -- --check
 
 install:
-	cargo run -p work-context-manager-installer
+	cargo run -p context-manager-installer
 
 clean:
 	cargo clean

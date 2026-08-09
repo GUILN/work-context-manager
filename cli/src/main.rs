@@ -4,8 +4,8 @@ use anyhow::{Context, Result};
 use clap::{Parser, Subcommand};
 use colored::Colorize;
 
-use work_context_manager::Config;
-use work_context_manager::Template;
+use context_manager::Config;
+use context_manager::Template;
 
 #[derive(Parser)]
 #[command(name = "context-manager", version, about = "Manage your work contexts")]
@@ -70,19 +70,19 @@ fn cmd_new(name: Option<String>) -> Result<()> {
         None => prompt_name()?,
     };
 
-    let templates = work_context_manager::template::list_templates(&cfg.template_folder)
-        .with_context(|| {
+    let templates =
+        context_manager::template::list_templates(&cfg.template_folder).with_context(|| {
             format!(
                 "failed to list templates from {}",
                 cfg.template_folder.display()
             )
         })?;
     if templates.is_empty() {
-        return Err(work_context_manager::Error::NoTemplates(cfg.template_folder.clone()).into());
+        return Err(context_manager::Error::NoTemplates(cfg.template_folder.clone()).into());
     }
 
     let template = pick_template(&templates)?;
-    let path = work_context_manager::work_context::new_work_context(&cfg, &name, &template)
+    let path = context_manager::work_context::new_work_context(&cfg, &name, &template)
         .with_context(|| "failed to create work context")?;
     println!(
         "{} created work context at {}",
@@ -92,7 +92,7 @@ fn cmd_new(name: Option<String>) -> Result<()> {
 
     let editor = cfg.resolve_editor();
     println!("{} opening with `{}` ...", "➜".cyan().bold(), editor);
-    work_context_manager::open_with(&path, &editor)
+    context_manager::open_with(&path, &editor)
         .with_context(|| "failed to open the work context in the editor")?;
     Ok(())
 }
