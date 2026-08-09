@@ -44,6 +44,7 @@ pub mod editor;
 pub mod error;
 pub mod project;
 pub mod template;
+pub mod tree;
 pub mod work_context;
 
 pub use app::App;
