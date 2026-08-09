@@ -1,3 +1,4 @@
+use std::path::PathBuf;
 use std::process::ExitCode;
 
 use anyhow::{Context, Result};
@@ -49,6 +50,11 @@ enum NewKind {
         /// Work name; prompted when omitted
         name: Option<String>,
     },
+    /// Create a sub-folder for templates
+    TemplateFolder {
+        /// Folder name; prompted when omitted
+        name: Option<String>,
+    },
 }
 
 fn main() -> ExitCode {
@@ -87,10 +93,11 @@ fn cmd_new(kind: Option<NewKind>) -> Result<()> {
     match kind {
         Some(NewKind::Project { name }) => cmd_new_project(&cfg, name),
         Some(NewKind::Context { name }) => cmd_new_context(&cfg, name),
+        Some(NewKind::TemplateFolder { name }) => cmd_new_template_folder(&cfg, name),
         None => {
             use dialoguer::Select;
 
-            let items = ["project", "context"];
+            let items = ["project", "context", "template folder"];
             let selection = Select::with_theme(&theme())
                 .with_prompt("What do you want to create?")
                 .items(items)
@@ -98,10 +105,26 @@ fn cmd_new(kind: Option<NewKind>) -> Result<()> {
                 .context("failed to read selection")?;
             match items[selection] {
                 "project" => cmd_new_project(&cfg, None),
-                _ => cmd_new_context(&cfg, None),
+                "context" => cmd_new_context(&cfg, None),
+                _ => cmd_new_template_folder(&cfg, None),
             }
         }
     }
+}
+
+fn cmd_new_template_folder(cfg: &Config, name: Option<String>) -> Result<()> {
+    let name = match name {
+        Some(name) => name,
+        None => prompt_text("Template folder name")?,
+    };
+    let path = context_manager::template::create_template_folder(cfg, &name)
+        .with_context(|| "failed to create template folder")?;
+    println!(
+        "{} created template folder at {}",
+        "✓".green().bold(),
+        path.display()
+    );
+    Ok(())
 }
 
 fn cmd_new_project(cfg: &Config, name: Option<String>) -> Result<()> {
@@ -147,7 +170,7 @@ fn cmd_new_context(cfg: &Config, name: Option<String>) -> Result<()> {
         return Err(context_manager::Error::NoTemplates(cfg.template_folder.clone()).into());
     }
 
-    let template = pick_template(&templates)?;
+    let template = pick_template(cfg)?;
     let path = context_manager::work_context::new_work_context(cfg, &project, &name, &template)
         .with_context(|| "failed to create work context")?;
     println!(
@@ -197,24 +220,36 @@ fn cmd_open(project: Option<String>) -> Result<()> {
         }
         None => vec![(root, 0)],
     };
-    run_tree_browser(&cfg, levels)
+    run_tree_browser(&cfg, levels, &mut open_file)?;
+    Ok(())
 }
 
 fn cmd_tree() -> Result<()> {
     let cfg = load_or_create_config()?;
     let root = context_manager::tree::build_tree(&cfg)?;
-    run_tree_browser(&cfg, vec![(root, 0)])
+    run_tree_browser(&cfg, vec![(root, 0)], &mut open_file)?;
+    Ok(())
+}
+
+fn open_file(cfg: &Config, node: &context_manager::tree::TreeNode) -> Result<bool> {
+    let editor = cfg.resolve_editor();
+    println!("{} opening with `{}` ...", "➜".cyan().bold(), editor);
+    context_manager::open_with(&node.path, &editor)
+        .with_context(|| "failed to open the work context in the editor")?;
+    Ok(false)
 }
 
 fn run_tree_browser(
     cfg: &Config,
     levels: Vec<(context_manager::tree::TreeNode, usize)>,
-) -> Result<()> {
+    on_file: &mut dyn FnMut(&Config, &context_manager::tree::TreeNode) -> Result<bool>,
+) -> Result<Option<PathBuf>> {
     use console::{Key, Term};
     use std::io::Write;
 
     let mut term = Term::stderr();
     let mut levels = levels;
+    let mut selected = None;
 
     term.hide_cursor()?;
     let result = (|| -> Result<()> {
@@ -276,11 +311,9 @@ fn run_tree_browser(
                     let child = node.children[*cursor].clone();
                     if child.is_dir() {
                         levels.push((child, 0));
-                    } else {
-                        let editor = cfg.resolve_editor();
-                        println!("{} opening with `{}` ...", "➜".cyan().bold(), editor);
-                        context_manager::open_with(&child.path, &editor)
-                            .with_context(|| "failed to open the work context in the editor")?;
+                    } else if on_file(cfg, &child)? {
+                        selected = Some(child.path);
+                        break;
                     }
                 }
                 Key::Escape => break,
@@ -291,7 +324,8 @@ fn run_tree_browser(
     })();
     term.show_cursor()?;
     term.clear_screen()?;
-    result
+    result?;
+    Ok(selected)
 }
 
 fn breadcrumb(path: &std::path::Path) -> String {
@@ -392,14 +426,17 @@ fn pick_project(projects: &[String]) -> Result<String> {
     Ok(projects[selection].clone())
 }
 
-fn pick_template(templates: &[Template]) -> Result<Template> {
-    use dialoguer::Select;
-
-    let names: Vec<String> = templates.iter().map(|t| t.name.clone()).collect();
-    let selection = Select::with_theme(&theme())
-        .with_prompt("Choose a template")
-        .items(&names)
-        .interact()
-        .context("failed to read template selection")?;
-    Ok(templates[selection].clone())
+fn pick_template(cfg: &Config) -> Result<Template> {
+    let root = context_manager::tree::build_tree_from(&cfg.template_folder)?;
+    let selected = run_tree_browser(cfg, vec![(root, 0)], &mut |_cfg, _node| Ok(true))?
+        .with_context(|| "no template selected")?;
+    let name = selected
+        .strip_prefix(&cfg.template_folder)
+        .expect("template always under template folder")
+        .to_string_lossy()
+        .into_owned();
+    Ok(Template {
+        name,
+        path: selected,
+    })
 }

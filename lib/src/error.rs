@@ -23,6 +23,10 @@ pub enum Error {
     EmptyProjectName,
     #[error("invalid project name `{0}`: {1}")]
     InvalidProjectName(String, String),
+    #[error("template folder name is empty")]
+    EmptyTemplateFolderName,
+    #[error("invalid template folder name `{0}`: {1}")]
+    InvalidTemplateFolderName(String, String),
     #[error("no projects found in {0}")]
     NoProjects(PathBuf),
     #[error("project `{0}` not found")]

@@ -58,7 +58,30 @@ impl TreeNode {
 /// std::fs::remove_dir_all(&dir).ok();
 /// ```
 pub fn build_tree(config: &Config) -> Result<TreeNode> {
-    build_node(&config.work_context_repo)
+    build_tree_from(&config.work_context_repo)
+}
+
+/// Builds the recursive tree starting at `root`. The root node represents
+/// `root` itself; folders are listed before files, hidden entries are skipped.
+///
+/// # Example
+///
+/// ```
+/// use context_manager::tree;
+///
+/// let dir = std::env::temp_dir().join("wcm-doc-tree-from");
+/// std::fs::create_dir_all(dir.join("sub")).unwrap();
+/// std::fs::write(dir.join("a.md"), "").unwrap();
+/// std::fs::write(dir.join("sub/b.md"), "").unwrap();
+///
+/// let root = tree::build_tree_from(&dir).unwrap();
+/// let names: Vec<&str> = root.children.iter().map(|c| c.name.as_str()).collect();
+/// assert_eq!(names, vec!["sub", "a.md"]);
+///
+/// std::fs::remove_dir_all(&dir).ok();
+/// ```
+pub fn build_tree_from(root: &Path) -> Result<TreeNode> {
+    build_node(root)
 }
 
 fn build_node(path: &Path) -> Result<TreeNode> {
