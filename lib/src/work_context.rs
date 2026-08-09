@@ -23,6 +23,7 @@ use crate::template::Template;
 /// let config = Config {
 ///     template_folder: template_path.clone(),
 ///     work_context_repo: repo.clone(),
+///     editor: None,
 /// };
 /// let template = Template {
 ///     name: "general.md".into(),
@@ -96,6 +97,7 @@ mod tests {
         let cfg = Config {
             template_folder: dir.path().join("templates"),
             work_context_repo: dir.path().join("repo"),
+            editor: None,
         };
         (cfg, dir)
     }
