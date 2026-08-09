@@ -1,27 +1,29 @@
 .PHONY: all build test run lint fmt docs install clean
 
+CARGO ?= $(shell command -v cargo 2>/dev/null || echo "$(HOME)/.cargo/bin/cargo")
+
 all: build
 
 build:
-	cargo build
+	$(CARGO) build
 
 run:
-	cargo run -p context-manager-cli
+	$(CARGO) run -p context-manager-cli
 
 test:
-	cargo test
+	$(CARGO) test
 
 docs:
-	cargo doc --no-deps
+	$(CARGO) doc --no-deps
 
 lint:
-	cargo clippy --all-targets --all-features -- -D warnings
+	$(CARGO) clippy --all-targets --all-features -- -D warnings
 
 fmt:
-	cargo fmt -- --check
+	$(CARGO) fmt -- --check
 
 install:
-	cargo run -p context-manager-installer
+	$(CARGO) run -p context-manager-installer
 
 clean:
-	cargo clean
+	$(CARGO) clean
