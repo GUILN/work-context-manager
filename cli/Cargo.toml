@@ -5,5 +5,13 @@ edition = "2021"
 description = "Command line interface for Work Context Manager"
 license = "MIT"
 
+[[bin]]
+name = "context-manager"
+path = "src/main.rs"
+
 [dependencies]
+anyhow = "1.0.104"
+clap = { version = "4.6.6", features = ["derive"] }
+colored = "3.1.1"
+dialoguer = "0.12.0"
 work-context-manager = { path = "../lib" }

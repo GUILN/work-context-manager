@@ -4,3 +4,12 @@ version = "0.1.0"
 edition = "2021"
 description = "Core logic for Work Context Manager, reusable by the CLI and a future Tauri app"
 license = "MIT"
+
+[dependencies]
+dirs = "6.0.0"
+serde = { version = "1.0.229", features = ["derive"] }
+thiserror = "2.0.19"
+toml = "1.1.4"
+
+[dev-dependencies]
+tempfile = "3.27.0"

@@ -1,0 +1,10 @@
+[package]
+name = "work-context-manager-installer"
+version = "0.1.0"
+edition = "2021"
+description = "Minimal installer for the Work Context Manager CLI"
+license = "MIT"
+
+[dependencies]
+anyhow = "1.0.104"
+dirs = "6.0.0"
