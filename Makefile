@@ -1,4 +1,4 @@
-.PHONY: all build test run lint fmt install clean
+.PHONY: all build test run lint fmt docs install clean
 
 all: build
 
@@ -10,6 +10,9 @@ run:
 
 test:
 	cargo test
+
+docs:
+	cargo doc --no-deps
 
 lint:
 	cargo clippy --all-targets --all-features -- -D warnings
