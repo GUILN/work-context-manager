@@ -14,6 +14,7 @@ kanban-plugin: board
 
 ## DONE
 
+- [x] [[Template sub-folders]]
 - [x] [[Make open follow the tree pattern]]
 - [x] [[Create tree command]]
 - [x] [[Project structure]]
