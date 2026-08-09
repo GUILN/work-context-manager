@@ -8,6 +8,7 @@
 //!
 //! - [`Config`]: TOML configuration living at `~/context_manager/config.toml`
 //! - [`Template`]: markdown templates stored in the configured template folder
+//! - [`project`]: organizing work contexts into project folders
 //! - [`work_context`]: creating new work contexts from those templates
 //!
 //! # Example
@@ -30,8 +31,9 @@
 //!     path: template_path.join("general.md"),
 //! };
 //!
-//! let path = work_context::new_work_context(&config, "My Work", &template).unwrap();
-//! assert!(path.ends_with("my-work.md"));
+//! let path =
+//!     work_context::new_work_context(&config, "Client Work", "My Work", &template).unwrap();
+//! assert!(path.ends_with("client-work/my-work.md"));
 //!
 //! std::fs::remove_dir_all(&dir).ok();
 //! ```
@@ -40,6 +42,7 @@ pub mod app;
 pub mod config;
 pub mod editor;
 pub mod error;
+pub mod project;
 pub mod template;
 pub mod work_context;
 
