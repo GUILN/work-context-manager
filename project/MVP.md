@@ -15,7 +15,8 @@ kanban-plugin: board
 ## DONE
 
 - [x] [[MVP - Create Project Cask]]
-
+- [x] [[MVP - Create Basic Functionality - Work Context Manager new]]
+- [x] [[MVP - Create a install]]
 
 
 

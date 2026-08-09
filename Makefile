@@ -1,4 +1,4 @@
-.PHONY: all build test run lint fmt clean
+.PHONY: all build test run lint fmt install clean
 
 all: build
 
@@ -16,6 +16,9 @@ lint:
 
 fmt:
 	cargo fmt -- --check
+
+install:
+	cargo run -p work-context-manager-installer
 
 clean:
 	cargo clean
