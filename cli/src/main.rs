@@ -89,6 +89,11 @@ fn cmd_new(name: Option<String>) -> Result<()> {
         "✓".green().bold(),
         path.display()
     );
+
+    let editor = cfg.resolve_editor();
+    println!("{} opening with `{}` ...", "➜".cyan().bold(), editor);
+    work_context_manager::open_with(&path, &editor)
+        .with_context(|| "failed to open the work context in the editor")?;
     Ok(())
 }
 

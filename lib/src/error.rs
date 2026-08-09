@@ -19,6 +19,16 @@ pub enum Error {
     EmptyWorkName,
     #[error("invalid work name `{0}`: {1}")]
     InvalidWorkName(String, String),
+    #[error("editor command is empty")]
+    EmptyEditor,
+    #[error("failed to launch editor `{editor}`: {source}")]
+    EditorLaunch {
+        editor: String,
+        #[source]
+        source: std::io::Error,
+    },
+    #[error("editor `{editor}` exited with code {code:?}")]
+    EditorExit { editor: String, code: Option<i32> },
 }
 
 pub type Result<T> = std::result::Result<T, Error>;

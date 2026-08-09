@@ -23,6 +23,7 @@
 //! let config = Config {
 //!     template_folder: template_path.clone(),
 //!     work_context_repo: dir.join("repo"),
+//!     editor: None,
 //! };
 //! let template = Template {
 //!     name: "general.md".into(),
@@ -37,11 +38,13 @@
 
 pub mod app;
 pub mod config;
+pub mod editor;
 pub mod error;
 pub mod template;
 pub mod work_context;
 
 pub use app::App;
 pub use config::Config;
+pub use editor::open_with;
 pub use error::{Error, Result};
 pub use template::Template;

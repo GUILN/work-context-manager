@@ -13,9 +13,44 @@ pub struct Config {
     pub template_folder: PathBuf,
     /// Folder where created work contexts are stored.
     pub work_context_repo: PathBuf,
+    /// Command used to open work context files. When `None`, the `VISUAL`
+    /// and `EDITOR` environment variables are used, falling back to `nvim`.
+    #[serde(default)]
+    pub editor: Option<String>,
 }
 
 impl Config {
+    /// Resolves the editor command for a work context file.
+    ///
+    /// Preference order: `editor` from the config, then `VISUAL`, then
+    /// `EDITOR`, then `nvim`.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use work_context_manager::Config;
+    ///
+    /// let cfg = Config::default_config().unwrap();
+    /// let editor = cfg.resolve_editor();
+    /// assert!(!editor.is_empty());
+    /// ```
+    pub fn resolve_editor(&self) -> String {
+        self.editor
+            .clone()
+            .filter(|e| !e.trim().is_empty())
+            .or_else(|| {
+                std::env::var("VISUAL")
+                    .ok()
+                    .filter(|e| !e.trim().is_empty())
+            })
+            .or_else(|| {
+                std::env::var("EDITOR")
+                    .ok()
+                    .filter(|e| !e.trim().is_empty())
+            })
+            .unwrap_or_else(|| "nvim".to_string())
+    }
+
     /// Returns `~/.work_context_manager`.
     ///
     /// # Example
@@ -49,6 +84,9 @@ impl Config {
 
     /// Creates a default config based on the home directory.
     ///
+    /// The `editor` field is left unset so the environment variables
+    /// (`VISUAL`/`EDITOR`) or the `nvim` fallback apply.
+    ///
     /// # Example
     ///
     /// ```
@@ -63,6 +101,7 @@ impl Config {
         Ok(Self {
             template_folder: home.join(CONFIG_DIR_NAME).join("templates"),
             work_context_repo: home.join("work_contexts"),
+            editor: None,
         })
     }
 
@@ -94,6 +133,7 @@ impl Config {
     /// let cfg = Config {
     ///     template_folder: Path::new("/tmp/templates").to_path_buf(),
     ///     work_context_repo: Path::new("/tmp/work").to_path_buf(),
+    ///     editor: Some("nvim".to_string()),
     /// };
     /// cfg.save_to(&path).unwrap();
     ///
@@ -154,6 +194,7 @@ impl Default for Config {
         Self::default_config().unwrap_or_else(|_| Self {
             template_folder: PathBuf::new(),
             work_context_repo: PathBuf::new(),
+            editor: None,
         })
     }
 }
@@ -180,6 +221,7 @@ mod tests {
         let cfg = Config {
             template_folder: Path::new("/tmp/templates").to_path_buf(),
             work_context_repo: Path::new("/tmp/work").to_path_buf(),
+            editor: Some("nvim".to_string()),
         };
         cfg.save_to(&path).unwrap();
 
