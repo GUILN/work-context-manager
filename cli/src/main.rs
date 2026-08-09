@@ -88,7 +88,7 @@ fn cmd_new(kind: Option<NewKind>) -> Result<()> {
             use dialoguer::Select;
 
             let items = ["project", "context"];
-            let selection = Select::new()
+            let selection = Select::with_theme(&theme())
                 .with_prompt("What do you want to create?")
                 .items(items)
                 .interact()
@@ -248,10 +248,30 @@ fn load_or_create_config() -> Result<Config> {
     }
 }
 
+fn theme() -> dialoguer::theme::ColorfulTheme {
+    use console::Style;
+    use dialoguer::theme::ColorfulTheme;
+
+    ColorfulTheme {
+        prompt_style: Style::new().for_stderr().cyan().bold(),
+        prompt_prefix: console::style("?".to_string()).for_stderr().cyan().bold(),
+        prompt_suffix: console::style("›".to_string()).for_stderr().cyan().bold(),
+        active_item_style: Style::new().for_stderr().cyan().bold(),
+        active_item_prefix: console::style("❯".to_string()).for_stderr().green().bold(),
+        inactive_item_style: Style::new().for_stderr().bright().black(),
+        values_style: Style::new().for_stderr().yellow(),
+        checked_item_prefix: console::style("✔".to_string()).for_stderr().green(),
+        unchecked_item_prefix: console::style("⬚".to_string()).for_stderr().yellow(),
+        picked_item_prefix: console::style("❯".to_string()).for_stderr().green().bold(),
+        unpicked_item_prefix: console::style(" ".to_string()).for_stderr(),
+        ..ColorfulTheme::default()
+    }
+}
+
 fn prompt_text(prompt: &str) -> Result<String> {
     use dialoguer::Input;
 
-    let name: String = Input::new()
+    let name: String = Input::with_theme(&theme())
         .with_prompt(prompt)
         .interact_text()
         .with_context(|| format!("failed to read {prompt}"))?;
@@ -261,7 +281,7 @@ fn prompt_text(prompt: &str) -> Result<String> {
 fn pick_project(projects: &[String]) -> Result<String> {
     use dialoguer::Select;
 
-    let selection = Select::new()
+    let selection = Select::with_theme(&theme())
         .with_prompt("Choose a project")
         .items(projects)
         .interact()
@@ -280,7 +300,7 @@ fn pick_context(contexts: &[std::path::PathBuf]) -> Result<std::path::PathBuf> {
                 .unwrap_or_else(|| p.display().to_string())
         })
         .collect();
-    let selection = Select::new()
+    let selection = Select::with_theme(&theme())
         .with_prompt("Choose a work context")
         .items(&names)
         .interact()
@@ -292,7 +312,7 @@ fn pick_template(templates: &[Template]) -> Result<Template> {
     use dialoguer::Select;
 
     let names: Vec<String> = templates.iter().map(|t| t.name.clone()).collect();
-    let selection = Select::new()
+    let selection = Select::with_theme(&theme())
         .with_prompt("Choose a template")
         .items(&names)
         .interact()
