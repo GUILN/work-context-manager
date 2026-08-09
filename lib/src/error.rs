@@ -19,6 +19,14 @@ pub enum Error {
     EmptyWorkName,
     #[error("invalid work name `{0}`: {1}")]
     InvalidWorkName(String, String),
+    #[error("project name is empty")]
+    EmptyProjectName,
+    #[error("invalid project name `{0}`: {1}")]
+    InvalidProjectName(String, String),
+    #[error("no projects found in {0}")]
+    NoProjects(PathBuf),
+    #[error("project `{0}` not found")]
+    ProjectNotFound(String),
     #[error("editor command is empty")]
     EmptyEditor,
     #[error("failed to launch editor `{editor}`: {source}")]

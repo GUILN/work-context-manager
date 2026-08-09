@@ -19,6 +19,14 @@ The goal of this app is to organize my daily workflow. Since I started working w
   - `lib` — core logic, reusable by the CLI and a future Tauri app
   - `cli` — thin command line interface on top of the lib
 
+## Usage
+- `context-manager new project <name>` — create a project folder inside the work context repo
+- `context-manager new context <name>` — create a work context inside a project (chooses a template); project and template are prompted when needed
+- `context-manager list` — list the projects in the work context repo
+- `context-manager open <project>` — list a project's work contexts and open the chosen one in your editor
+- `context-manager init` — create the config and default template folder
+- `context-manager show-config` — print the current configuration
+
 ## Development
 Build, test, lint and format commands are wrapped in the `Makefile` (see `make help`, or just `make` for a build). Cargo is available under `~/.cargo` — add it to your `PATH` if rustup was installed with `--no-modify-path`.
 
