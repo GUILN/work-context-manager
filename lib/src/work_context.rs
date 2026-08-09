@@ -5,6 +5,36 @@ use crate::error::{Error, Result};
 use crate::template::Template;
 
 /// Creates a new work context file in the configured repo, rendering `template`.
+///
+/// The work name is sanitized to kebab-case before being used as the file
+/// name, and the repo directory is created if it does not exist yet.
+///
+/// # Example
+///
+/// ```
+/// use work_context_manager::{Config, Template, work_context};
+///
+/// let dir = std::env::temp_dir().join("wcm-doc-new");
+/// let repo = dir.join("repo");
+/// let template_path = dir.join("templates");
+/// std::fs::create_dir_all(&template_path).unwrap();
+/// std::fs::write(template_path.join("general.md"), "# {{ name }}\n").unwrap();
+///
+/// let config = Config {
+///     template_folder: template_path.clone(),
+///     work_context_repo: repo.clone(),
+/// };
+/// let template = Template {
+///     name: "general.md".into(),
+///     path: template_path.join("general.md"),
+/// };
+///
+/// let path = work_context::new_work_context(&config, "My Work", &template).unwrap();
+/// assert!(path.ends_with("my-work.md"));
+/// assert_eq!(std::fs::read_to_string(&path).unwrap(), "# my-work\n");
+///
+/// std::fs::remove_dir_all(&dir).ok();
+/// ```
 pub fn new_work_context(config: &Config, name: &str, template: &Template) -> Result<PathBuf> {
     let name = sanitize_name(name)?;
     std::fs::create_dir_all(&config.work_context_repo)?;
@@ -17,6 +47,16 @@ pub fn new_work_context(config: &Config, name: &str, template: &Template) -> Res
 }
 
 /// Sanitizes a work name into a valid & tidy file name (kebab-case).
+///
+/// # Example
+///
+/// ```
+/// use work_context_manager::work_context::sanitize_name;
+///
+/// assert_eq!(sanitize_name("My Work").unwrap(), "my-work");
+/// assert_eq!(sanitize_name("  Frontend   Refresh ").unwrap(), "frontend-refresh");
+/// assert!(sanitize_name("   ").is_err());
+/// ```
 pub fn sanitize_name(name: &str) -> Result<String> {
     let trimmed = name.trim();
     if trimmed.is_empty() {

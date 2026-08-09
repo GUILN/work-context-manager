@@ -32,7 +32,8 @@ The project is a Cargo workspace with two crates: `lib/` (core logic) and `cli/`
 
 - `make build` — build the whole workspace
 - `make run` — run the CLI
-- `make test` — run all tests
+- `make test` — run all tests (unit + doc)
+- `make docs` — build the docs with `cargo doc --no-deps`
 - `make lint` — run `cargo clippy` with warnings as errors
 - `make fmt` — check formatting with `cargo fmt --check`
 - `make clean` — remove build artifacts
