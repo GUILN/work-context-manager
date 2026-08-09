@@ -155,6 +155,7 @@ dependencies = [
  "anyhow",
  "clap",
  "colored",
+ "console",
  "context-manager",
  "dialoguer",
 ]
