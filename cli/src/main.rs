@@ -238,7 +238,7 @@ fn cmd_tree() -> Result<()> {
                     term,
                     "{} {}",
                     "📁".cyan().bold(),
-                    breadcrumb(&levels).bold()
+                    breadcrumb(levels.last().expect("tree never empty").0.path.as_path()).bold()
                 )?;
                 writeln!(term)?;
                 if node.children.is_empty() {
@@ -305,12 +305,16 @@ fn cmd_tree() -> Result<()> {
     result
 }
 
-fn breadcrumb(levels: &[(context_manager::tree::TreeNode, usize)]) -> String {
-    levels
-        .iter()
-        .map(|(node, _)| node.name.as_str())
-        .collect::<Vec<_>>()
-        .join("/")
+fn breadcrumb(path: &std::path::Path) -> String {
+    if let Ok(home) = std::env::var("HOME") {
+        if let Ok(stripped) = path.strip_prefix(&home) {
+            if stripped.as_os_str().is_empty() {
+                return "~".to_string();
+            }
+            return format!("~/{}", stripped.display());
+        }
+    }
+    path.display().to_string()
 }
 
 fn render_help(term: &mut console::Term) -> Result<()> {
