@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::error::{Error, Result};
 
-pub const CONFIG_DIR_NAME: &str = ".context_manager";
+pub const CONFIG_DIR_NAME: &str = "context_manager";
 pub const CONFIG_FILE_NAME: &str = "config.toml";
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -51,7 +51,7 @@ impl Config {
             .unwrap_or_else(|| "nvim".to_string())
     }
 
-    /// Returns `~/.context_manager`.
+    /// Returns `~/context_manager`.
     ///
     /// # Example
     ///
@@ -67,7 +67,7 @@ impl Config {
         Ok(home.join(CONFIG_DIR_NAME))
     }
 
-    /// Returns `~/.context_manager/config.toml`.
+    /// Returns `~/context_manager/config.toml`.
     ///
     /// # Example
     ///
@@ -105,7 +105,7 @@ impl Config {
         })
     }
 
-    /// Loads the config from `~/.context_manager/config.toml`.
+    /// Loads the config from `~/context_manager/config.toml`.
     ///
     /// # Example
     ///
