@@ -31,6 +31,8 @@ enum Command {
         /// Project name; prompted when omitted
         project: Option<String>,
     },
+    /// Browse projects and contexts interactively
+    Tree,
     /// Print the current configuration
     ShowConfig,
 }
@@ -56,6 +58,7 @@ fn main() -> ExitCode {
         Command::New { kind } => cmd_new(kind),
         Command::List => cmd_list(),
         Command::Open { project } => cmd_open(project),
+        Command::Tree => cmd_tree(),
         Command::ShowConfig => cmd_show_config(),
     };
     match result {
@@ -211,6 +214,113 @@ fn cmd_open(project: Option<String>) -> Result<()> {
     println!("{} opening with `{}` ...", "➜".cyan().bold(), editor);
     context_manager::open_with(&context, &editor)
         .with_context(|| "failed to open the work context in the editor")?;
+    Ok(())
+}
+
+fn cmd_tree() -> Result<()> {
+    use console::{Key, Term};
+    use std::io::Write;
+
+    let cfg = load_or_create_config()?;
+    let root = context_manager::tree::build_tree(&cfg)?;
+    let mut term = Term::stderr();
+
+    let mut levels: Vec<(context_manager::tree::TreeNode, usize)> = vec![(root, 0)];
+
+    term.hide_cursor()?;
+    let result = (|| -> Result<()> {
+        loop {
+            term.clear_screen()?;
+            render_help(&mut term)?;
+            {
+                let (node, cursor) = levels.last().expect("tree never empty");
+                writeln!(
+                    term,
+                    "{} {}",
+                    "📁".cyan().bold(),
+                    breadcrumb(&levels).bold()
+                )?;
+                writeln!(term)?;
+                if node.children.is_empty() {
+                    writeln!(term, "{}", "(no entries)".dimmed())?;
+                } else {
+                    for (i, child) in node.children.iter().enumerate() {
+                        let marker = if i == *cursor { "❯" } else { " " };
+                        if child.is_dir() {
+                            writeln!(
+                                term,
+                                "{} {}/",
+                                marker.green().bold(),
+                                child.name.cyan().bold()
+                            )?;
+                        } else {
+                            writeln!(term, "{} {}", marker.green().bold(), child.name.yellow())?;
+                        }
+                    }
+                }
+                term.flush()?;
+            }
+
+            match term.read_key()? {
+                Key::ArrowUp => {
+                    let (_, cursor) = levels.last_mut().expect("tree never empty");
+                    if *cursor > 0 {
+                        *cursor -= 1;
+                    }
+                }
+                Key::ArrowDown => {
+                    let (node, cursor) = levels.last_mut().expect("tree never empty");
+                    if *cursor + 1 < node.children.len() {
+                        *cursor += 1;
+                    }
+                }
+                Key::ArrowLeft => {
+                    if levels.len() > 1 {
+                        levels.pop();
+                    }
+                }
+                Key::ArrowRight | Key::Enter => {
+                    let (node, cursor) = levels.last().expect("tree never empty");
+                    if node.children.is_empty() {
+                        continue;
+                    }
+                    let child = node.children[*cursor].clone();
+                    if child.is_dir() {
+                        levels.push((child, 0));
+                    } else {
+                        let editor = cfg.resolve_editor();
+                        println!("{} opening with `{}` ...", "➜".cyan().bold(), editor);
+                        context_manager::open_with(&child.path, &editor)
+                            .with_context(|| "failed to open the work context in the editor")?;
+                    }
+                }
+                Key::Escape => break,
+                _ => {}
+            }
+        }
+        Ok(())
+    })();
+    term.show_cursor()?;
+    term.clear_screen()?;
+    result
+}
+
+fn breadcrumb(levels: &[(context_manager::tree::TreeNode, usize)]) -> String {
+    levels
+        .iter()
+        .map(|(node, _)| node.name.as_str())
+        .collect::<Vec<_>>()
+        .join("/")
+}
+
+fn render_help(term: &mut console::Term) -> Result<()> {
+    use std::io::Write;
+
+    writeln!(
+        term,
+        "{}",
+        "↑/↓ move · →/↵ open · ← back · esc quit".dimmed()
+    )?;
     Ok(())
 }
 

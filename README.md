@@ -24,6 +24,7 @@ The goal of this app is to organize my daily workflow. Since I started working w
 - `context-manager new context <name>` — create a work context inside a project (chooses a template); project and template are prompted when needed
 - `context-manager list` — list the projects in the work context repo
 - `context-manager open <project>` — list a project's work contexts and open the chosen one in your editor
+- `context-manager tree` — browse projects and contexts interactively (↑/↓ move, →/↵ open, ← back, esc quit)
 - `context-manager init` — create the config and default template folder
 - `context-manager show-config` — print the current configuration
 
