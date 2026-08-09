@@ -1,5 +1,5 @@
 [package]
-name = "work-context-manager-cli"
+name = "context-manager-cli"
 version = "0.1.0"
 edition = "2021"
 description = "Command line interface for Work Context Manager"
@@ -14,4 +14,4 @@ anyhow = "1.0.104"
 clap = { version = "4.6.6", features = ["derive"] }
 colored = "3.1.1"
 dialoguer = "0.12.0"
-work-context-manager = { path = "../lib" }
+context-manager = { path = "../lib" }

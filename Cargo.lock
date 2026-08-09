@@ -138,6 +138,36 @@ dependencies = [
 ]
 
 [[package]]
+name = "context-manager"
+version = "0.1.0"
+dependencies = [
+ "dirs",
+ "serde",
+ "tempfile",
+ "thiserror",
+ "toml",
+]
+
+[[package]]
+name = "context-manager-cli"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "clap",
+ "colored",
+ "context-manager",
+ "dialoguer",
+]
+
+[[package]]
+name = "context-manager-installer"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "dirs",
+]
+
+[[package]]
 name = "dialoguer"
 version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -513,36 +543,6 @@ name = "winnow"
 version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "23b97319f7b8343df12cc98938e5c3eb436064524c8d2b4e30a1d3a36eecdf81"
-
-[[package]]
-name = "work-context-manager"
-version = "0.1.0"
-dependencies = [
- "dirs",
- "serde",
- "tempfile",
- "thiserror",
- "toml",
-]
-
-[[package]]
-name = "work-context-manager-cli"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "clap",
- "colored",
- "dialoguer",
- "work-context-manager",
-]
-
-[[package]]
-name = "work-context-manager-installer"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "dirs",
-]
 
 [[package]]
 name = "zeroize"

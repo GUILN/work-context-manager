@@ -1,5 +1,5 @@
 [package]
-name = "work-context-manager"
+name = "context-manager"
 version = "0.1.0"
 edition = "2021"
 description = "Core logic for Work Context Manager, reusable by the CLI and a future Tauri app"

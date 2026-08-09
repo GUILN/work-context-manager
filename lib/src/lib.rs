@@ -6,14 +6,14 @@
 //!
 //! The library is organised around three pieces:
 //!
-//! - [`Config`]: TOML configuration living at `~/.work_context_manager/config.toml`
+//! - [`Config`]: TOML configuration living at `~/.context_manager/config.toml`
 //! - [`Template`]: markdown templates stored in the configured template folder
 //! - [`work_context`]: creating new work contexts from those templates
 //!
 //! # Example
 //!
 //! ```
-//! use work_context_manager::{Config, Template, work_context};
+//! use context_manager::{Config, Template, work_context};
 //!
 //! let dir = std::env::temp_dir().join("wcm-doc-crate");
 //! let template_path = dir.join("templates");

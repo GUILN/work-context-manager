@@ -11,7 +11,7 @@ use crate::error::{Error, Result};
 /// # Example
 ///
 /// ```no_run
-/// use work_context_manager::editor::open_with;
+/// use context_manager::editor::open_with;
 ///
 /// let path = std::path::Path::new("/tmp/work/my-work.md");
 /// open_with(path, "nvim").expect("editor should launch");

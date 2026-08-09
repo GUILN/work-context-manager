@@ -1,5 +1,5 @@
 [package]
-name = "work-context-manager-installer"
+name = "context-manager-installer"
 version = "0.1.0"
 edition = "2021"
 description = "Minimal installer for the Work Context Manager CLI"

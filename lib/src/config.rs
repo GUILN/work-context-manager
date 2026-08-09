@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::error::{Error, Result};
 
-pub const CONFIG_DIR_NAME: &str = ".work_context_manager";
+pub const CONFIG_DIR_NAME: &str = ".context_manager";
 pub const CONFIG_FILE_NAME: &str = "config.toml";
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -28,7 +28,7 @@ impl Config {
     /// # Example
     ///
     /// ```
-    /// use work_context_manager::Config;
+    /// use context_manager::Config;
     ///
     /// let cfg = Config::default_config().unwrap();
     /// let editor = cfg.resolve_editor();
@@ -51,13 +51,13 @@ impl Config {
             .unwrap_or_else(|| "nvim".to_string())
     }
 
-    /// Returns `~/.work_context_manager`.
+    /// Returns `~/.context_manager`.
     ///
     /// # Example
     ///
     /// ```
-    /// use work_context_manager::config::CONFIG_DIR_NAME;
-    /// use work_context_manager::Config;
+    /// use context_manager::config::CONFIG_DIR_NAME;
+    /// use context_manager::Config;
     ///
     /// let dir = Config::config_dir().expect("home dir available");
     /// assert!(dir.ends_with(CONFIG_DIR_NAME));
@@ -67,13 +67,13 @@ impl Config {
         Ok(home.join(CONFIG_DIR_NAME))
     }
 
-    /// Returns `~/.work_context_manager/config.toml`.
+    /// Returns `~/.context_manager/config.toml`.
     ///
     /// # Example
     ///
     /// ```
-    /// use work_context_manager::config::CONFIG_FILE_NAME;
-    /// use work_context_manager::Config;
+    /// use context_manager::config::CONFIG_FILE_NAME;
+    /// use context_manager::Config;
     ///
     /// let path = Config::config_path().expect("home dir available");
     /// assert!(path.ends_with(CONFIG_FILE_NAME));
@@ -90,7 +90,7 @@ impl Config {
     /// # Example
     ///
     /// ```
-    /// use work_context_manager::Config;
+    /// use context_manager::Config;
     ///
     /// let cfg = Config::default_config().expect("home dir available");
     /// assert!(cfg.template_folder.ends_with("templates"));
@@ -105,12 +105,12 @@ impl Config {
         })
     }
 
-    /// Loads the config from `~/.work_context_manager/config.toml`.
+    /// Loads the config from `~/.context_manager/config.toml`.
     ///
     /// # Example
     ///
     /// ```no_run
-    /// use work_context_manager::Config;
+    /// use context_manager::Config;
     ///
     /// let cfg = Config::load().expect("config file must exist");
     /// ```
@@ -124,7 +124,7 @@ impl Config {
     ///
     /// ```
     /// use std::path::Path;
-    /// use work_context_manager::Config;
+    /// use context_manager::Config;
     ///
     /// let dir = std::env::temp_dir().join("wcm-doc-load_from");
     /// std::fs::create_dir_all(&dir).unwrap();
@@ -153,7 +153,7 @@ impl Config {
     /// # Example
     ///
     /// ```no_run
-    /// use work_context_manager::Config;
+    /// use context_manager::Config;
     ///
     /// let cfg = Config::default_config().unwrap();
     /// cfg.save().expect("config should be saved");
@@ -168,7 +168,7 @@ impl Config {
     /// # Example
     ///
     /// ```
-    /// use work_context_manager::Config;
+    /// use context_manager::Config;
     ///
     /// let dir = std::env::temp_dir().join("wcm-doc-save_to");
     /// let path = dir.join("config.toml");

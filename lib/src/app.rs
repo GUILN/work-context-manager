@@ -27,7 +27,7 @@ mod tests {
     #[test]
     fn new_app_is_constructible() {
         let app = App::new();
-        assert_eq!(app.name(), "work-context-manager");
+        assert_eq!(app.name(), "context-manager");
     }
 
     #[test]
